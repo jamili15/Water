@@ -1,7 +1,7 @@
 import EmailVerification from "@/components/form/EmailVerification";
 import MasterLayout from "@/components/layouts/MasterLayout";
 
-const idToTitleMap: { [key: string]: string } = {
+const lguName: { [key: string]: string } = {
   bohol_tagbilaran: "Tagbilaran City",
   bohol_danao: "Bohol Danao",
 
@@ -10,7 +10,7 @@ const idToTitleMap: { [key: string]: string } = {
 
 export default function Page({ params }: { params: { id: string } }) {
   const id = params.id;
-  const title = idToTitleMap[id] || "Unknown City";
+  const title = lguName[id] || "Unknown City";
   return (
     <MasterLayout lgucaption={title}>
       <EmailVerification moduleTitle=" waterworks online billing and payment" />
