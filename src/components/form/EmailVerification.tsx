@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/system";
 import Button from "@mui/material/Button";
@@ -27,17 +27,17 @@ interface LoginFromProps {
   onChangeAccount?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const BouncedTextField = styled(TextField)<{ showEmailValidation: boolean }>(
-  ({ showEmailValidation }) => ({
-    "& .MuiFormLabel-root": {
-      transition: "color 0.2s, transform 0.2s",
-      ...(showEmailValidation && {
-        animation: "bounce 0.2s ease-in-out 1.5",
-        color: "#b00020",
-      }),
-    },
-  })
-);
+const BouncedTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== "showEmailValidation",
+})<{ showEmailValidation: boolean }>(({ showEmailValidation }) => ({
+  "& .MuiFormLabel-root": {
+    transition: "color 0.2s, transform 0.2s",
+    ...(showEmailValidation && {
+      animation: "bounce 0.2s ease-in-out 1.5",
+      color: "#b00020",
+    }),
+  },
+}));
 
 const EmailVerification: React.FC<LoginFromProps> = ({
   moduleTitle,
@@ -120,9 +120,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
   };
 
   return (
-    <div
-      className={`bg-white w-[700px] py-5 flex items-center justify-center rounded-md shadow-md text-[16px]`}
-    >
+    <div className="bg-white w-[700px] py-5 flex items-center justify-center rounded-md shadow-md text-[16px]">
       <div className="p-10 w-full">
         <div className="flex flex-col gap-2 pb-2">
           <h1 className="capitalize text-[26.4px] font-bold ">{moduleTitle}</h1>
@@ -213,7 +211,6 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                         </div>
                       )}
                     />
-
                     <div className="!w-full">
                       <Button
                         className="float-right hover:bg-transparent mt-5 text-gray-500"
@@ -267,8 +264,6 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                 )}
                 {billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
-                    {/*  */}
-
                     <BillingInfo />
                   </div>
                 )}
