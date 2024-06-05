@@ -1,13 +1,18 @@
-import React from "react";
+import { useWaterBillingContext } from "@/context/WaterBillingContext";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+import { MouseEventHandler } from "react";
 import Currency from "../ui/Currency";
+
+interface BillInfoProps {
+  onBack?: MouseEventHandler<HTMLButtonElement>;
+}
 
 function createData(
   account: string,
@@ -20,32 +25,45 @@ function createData(
 const rows = [
   createData("WATER BILL - CURRENT", "MAY 2024", 6.0),
   createData("WATER BILL PENALTY - CURRENT", "MAY 2024", 9.0),
-  createData("Eclair", "MAY 2024", 16.0),
 ];
 
-const additionalRows = [{ remarks: "Total :", amountdue: 100.2 }];
+const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
+  const {
+    acctno,
+    acctName,
+    address,
+    classification,
+    coverage,
+    monthName,
+    billYear,
+    meterSize,
+    prevReading,
+    reading,
+    volume,
+    billitems,
+    penalty,
+  } = useWaterBillingContext();
 
-const dataInfo = [
-  { value: "24000069", label: "Account No." },
-  { value: "JUAN DELA CRUZ", label: "Account Name" },
-  { value: "CEBU CITY", label: "Address" },
-  { value: "RESIDENTIAL", label: "Classification" },
-  { value: "WB202405-260801-B-00024", label: "Last Bill Period" },
-];
+  const dataInfo = [
+    { value: acctno, label: "Account No." },
+    { value: acctName, label: "Account Name" },
+    { value: address, label: "Address" },
+    { value: classification, label: "Classification" },
+    { value: coverage, label: "Coverage" },
+  ];
 
-const dataMonthYear = [
-  { value: "MAY", label: "Bill Month" },
-  { value: "2024", label: "Bill Year" },
-];
+  const dataMonthYear = [
+    { value: monthName, label: "Bill Month" },
+    { value: billYear, label: "Bill Year" },
+  ];
 
-const dataReading = [
-  { value: "1/2", label: "Meter Size" },
-  { value: "7865", label: "Previous Reading" },
-  { value: "7903", label: "Current Reading" },
-  { value: "38", label: "Consumption" },
-];
+  const dataReading = [
+    { value: meterSize, label: "Meter Size" },
+    { value: prevReading, label: "Previous Reading" },
+    { value: reading, label: "Current Reading" },
+    { value: volume, label: "Consumption" },
+  ];
 
-const BillingInfo = () => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div>
@@ -88,39 +106,40 @@ const BillingInfo = () => {
         ))}
       </div>
       <div className="flex flex-col gap-5">
-        <h1>Bill Details</h1>
+        <h1 className="text-center">Billing Summary</h1>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 600 }} aria-label="simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Account</TableCell>
-                <TableCell align="right">Remarks</TableCell>
-                <TableCell align="right">Amount Due</TableCell>
+              <TableRow className="uppercase">
+                <TableCell className="font-bold">Particulars</TableCell>
+                <TableCell align="right" className="font-bold">
+                  Amount
+                </TableCell>
+                <TableCell align="right" className="font-bold">
+                  Disc/Penalty
+                </TableCell>
+                <TableCell align="right" className="font-bold">
+                  total
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {billitems.map((item, index) => (
                 <TableRow
-                  key={row.account}
+                  key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.account}
-                  </TableCell>
-                  <TableCell align="right">{row.remarks}</TableCell>
-                  <TableCell align="right">
-                    <Currency currency="Php" amount={row.amountdue} />
-                  </TableCell>
-                </TableRow>
-              ))}
-              {additionalRows.map((row, index) => (
-                <TableRow key={`${index}`}>
-                  <TableCell component="th" scope="row" />
-                  <TableCell align="right" className="font-bold">
-                    {row.remarks}
+                  <TableCell component="th" scope="row" className="uppercase">
+                    {item.particulars}
                   </TableCell>
                   <TableCell align="right">
-                    <Currency currency="Php" amount={row.amountdue} />
+                    <Currency currency="Php" amount={item.amount} />
+                  </TableCell>
+                  <TableCell align="right">
+                    <Currency currency="Php" amount={penalty} />
+                  </TableCell>
+                  <TableCell align="right">
+                    <Currency currency="Php" amount={item.total} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -132,7 +151,7 @@ const BillingInfo = () => {
         <Button
           className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
           size="medium"
-          href="/"
+          onClick={onBack}
         >
           Back
         </Button>

@@ -1,18 +1,21 @@
+"use client";
+
 import EmailVerification from "@/components/form/EmailVerification";
 import MasterLayout from "@/components/layouts/MasterLayout";
-
-const lguName: { [key: string]: string } = {
-  bohol_tagbilaran: "Tagbilaran City",
-  bohol_danao: "Bohol Danao",
-
-  // Add more id to title mappings as needed
-};
+import { usePartnerContext } from "@/context/PartnerContext";
+import { useEffect } from "react";
 
 export default function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
-  const title = lguName[id] || "Unknown City";
+  const { title, setId, resources } = usePartnerContext();
+
+  useEffect(() => {
+    if (params.id) {
+      setId(params.id);
+    }
+  }, [setId]);
+
   return (
-    <MasterLayout lgucaption={title}>
+    <MasterLayout lgucaption={title} lguLogo={resources}>
       <EmailVerification moduleTitle=" waterworks online billing and payment" />
     </MasterLayout>
   );

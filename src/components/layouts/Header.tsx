@@ -1,23 +1,27 @@
-import React from "react";
 import Image from "next/image";
+import React from "react";
 
 interface HeaderProps {
   lgucaption?: string;
+  lguLogo: string;
   className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ lgucaption, className }) => {
+const Header: React.FC<HeaderProps> = ({ lgucaption, lguLogo, className }) => {
   return (
     <header className={`${className} bg-[#2c3e50] w-full h-14`}>
       <div className="flex gap-5 items-center h-full pl-16 text-xl text-white font-bold">
         <div>
           <Image
-            src={"/lgu-logo.png"}
+            src={lguLogo || ""}
             height={45}
             width={45}
             quality={100}
             alt={"lgu-logo"}
             className="bg-white rounded-full"
+            loading="eager"
+            priority
+            unoptimized
           />
         </div>
         <p>{lgucaption}</p>
