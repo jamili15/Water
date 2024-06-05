@@ -1,3 +1,5 @@
+// useEmailVerification
+
 import { useState, useEffect } from "react";
 
 const useEmailVerification = () => {
@@ -15,6 +17,7 @@ const useEmailVerification = () => {
   const [billingInfo, setBillingInfo] = useState(false);
   const [accountNoError, setAccountNoError] = useState(false);
   const [open, setOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const formatPhoneNumber = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
@@ -69,23 +72,21 @@ const useEmailVerification = () => {
   };
   //
   const handleNextClick = () => {
-    if (emailAddress.trim() === "") {
-      setShowEmailValidation(true);
-      return;
-    }
-
-    if (!showOTPField && !showAccountNoField) {
-      setShowOTPField(true);
-    } else if (showOTPField && !showAccountNoField) {
+    if (currentStep === 1) {
+      if (emailAddress.trim() === "") {
+        setShowEmailValidation(true);
+        return;
+      }
+      setCurrentStep(2); // Move to OTP step
+    } else if (currentStep === 2) {
       const isOTPValid = otpValidationFunction(otp);
       if (!isOTPValid) {
         setShowInvalidKey(true);
       } else {
-        setShowOTPField(false);
-        setShowAccountNoField(true);
+        setCurrentStep(3); // Move to account number step
         setShowInvalidKey(false);
       }
-    } else if (showAccountNoField) {
+    } else if (currentStep === 3) {
       if (accountNo === "240000669") {
         setBillingInfo(true);
       } else {
@@ -95,16 +96,17 @@ const useEmailVerification = () => {
   };
 
   const handleBackClick = () => {
-    if (billingInfo) {
+    if (currentStep === 3 && !billingInfo) {
+      // If on the account number step, go back to the email and phone number step
+      setCurrentStep(1);
+    } else if (currentStep === 3 && billingInfo) {
+      // If on the billing information step, go back to the account number step
       setBillingInfo(false);
-      setShowAccountNoField(true);
-    } else if (showOTPField) {
-      setShowOTPField(false);
-    } else if (showAccountNoField) {
-      setShowAccountNoField(false);
-      setShowOTPField(true);
+      setCurrentStep(3);
+    } else if (currentStep > 1) {
+      // Otherwise, go back to the previous step
+      setCurrentStep(currentStep - 1);
     }
-    setShowInvalidKey(false);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -151,6 +153,7 @@ const useEmailVerification = () => {
     billingInfo,
     accountNoError,
     open,
+    currentStep,
     handleEmailAddressChange,
     handlePhoneNumberChange,
     handleOTPChange,

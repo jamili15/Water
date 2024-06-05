@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,21 +9,24 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Currency from "../ui/Currency";
 
+interface BillInfoProps {
+  onBack?: MouseEventHandler<HTMLButtonElement>;
+}
+
 function createData(
-  account: string,
-  remarks: number | string,
-  amountdue: number
+  particulars: string | number,
+  amountdiscpenalty: number,
+  total: number
 ) {
-  return { account, remarks, amountdue };
+  return { particulars, amountdiscpenalty, total };
 }
 
 const rows = [
-  createData("WATER BILL - CURRENT", "MAY 2024", 6.0),
-  createData("WATER BILL PENALTY - CURRENT", "MAY 2024", 9.0),
-  createData("Eclair", "MAY 2024", 16.0),
+  createData("WATER BILL mar 2024", 200, 200),
+  createData("WATER BILL apr 2024", 80, 80),
 ];
 
-const additionalRows = [{ remarks: "Total :", amountdue: 100.2 }];
+const additionalRows = [{ remarks: "Total amount due", amountdue: 280 }];
 
 const dataInfo = [
   { value: "24000069", label: "Account No." },
@@ -45,7 +48,7 @@ const dataReading = [
   { value: "38", label: "Consumption" },
 ];
 
-const BillingInfo = () => {
+const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div>
@@ -88,38 +91,48 @@ const BillingInfo = () => {
         ))}
       </div>
       <div className="flex flex-col gap-5">
-        <h1>Bill Details</h1>
+        <h1 className="text-center">Billing Summary</h1>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 600 }} aria-label="simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Account</TableCell>
-                <TableCell align="right">Remarks</TableCell>
-                <TableCell align="right">Amount Due</TableCell>
+              <TableRow className="uppercase">
+                <TableCell className="font-bold">Particulars</TableCell>
+                <TableCell align="left" className="font-bold">
+                  Amount disc/penalty
+                </TableCell>
+                <TableCell align="right" className="font-bold">
+                  total
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
                 <TableRow
-                  key={row.account}
+                  key={row.particulars}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.account}
+                  <TableCell component="th" scope="row" className="uppercase">
+                    {row.particulars}
                   </TableCell>
-                  <TableCell align="right">{row.remarks}</TableCell>
+                  <TableCell align="left">
+                    <Currency currency="Php" amount={row.amountdiscpenalty} />
+                  </TableCell>
                   <TableCell align="right">
-                    <Currency currency="Php" amount={row.amountdue} />
+                    <Currency currency="Php" amount={row.total} />
                   </TableCell>
                 </TableRow>
               ))}
               {additionalRows.map((row, index) => (
                 <TableRow key={`${index}`}>
-                  <TableCell component="th" scope="row" />
-                  <TableCell align="right" className="font-bold">
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    className="font-bold uppercase"
+                  >
                     {row.remarks}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left" className="font-bold" />
+                  <TableCell align="right" className="font-bold">
                     <Currency currency="Php" amount={row.amountdue} />
                   </TableCell>
                 </TableRow>
@@ -132,7 +145,7 @@ const BillingInfo = () => {
         <Button
           className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
           size="medium"
-          href="/"
+          onClick={onBack}
         >
           Back
         </Button>

@@ -1,3 +1,5 @@
+//EmailVerification
+
 "use client";
 import React from "react";
 import TextField from "@mui/material/TextField";
@@ -66,6 +68,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     billingInfo,
     accountNoError,
     open,
+    currentStep,
     handleEmailAddressChange,
     handlePhoneNumberChange,
     handleOTPChange,
@@ -84,15 +87,15 @@ const EmailVerification: React.FC<LoginFromProps> = ({
   let subTitleText = "";
 
   if (!billingInfo) {
-    if (!showOTPField && !showAccountNoField) {
+    if (currentStep === 1) {
       descriptionText =
         "A validation key will be sent to your email or mobile phone. Please make sure your email is valid and you have access to it.";
       subTitleText = "Email Verification";
-    } else if (showOTPField && !showAccountNoField) {
+    } else if (currentStep === 2) {
       descriptionText =
         "Please check your email inbox or spam folder for the sent 6-digit validation key. If you have not received any Email Verification, please click resend code.";
       subTitleText = "Email Verification";
-    } else if (showAccountNoField) {
+    } else if (currentStep === 3) {
       descriptionText = "Please enter your Account number.";
       subTitleText = "Initial Information";
     }
@@ -149,7 +152,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
               onSubmit={handleSubmit}
             >
               <div className="relative flex flex-col w-full gap-6">
-                {!showOTPField && !showAccountNoField && !billingInfo && (
+                {currentStep === 1 && (
                   <>
                     <Field
                       name="emailAddress"
@@ -192,7 +195,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                     />
                   </>
                 )}
-                {showOTPField && !showAccountNoField && !billingInfo && (
+                {currentStep === 2 && !billingInfo && (
                   <div className="!w-full">
                     <Field
                       name="otp"
@@ -254,7 +257,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                     </div>
                   </div>
                 )}
-                {showAccountNoField && !billingInfo && (
+                {currentStep === 3 && !billingInfo && (
                   <RefAccount
                     value={accountNo}
                     onChange={handleAccountChange}
@@ -264,7 +267,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                 )}
                 {billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
-                    <BillingInfo />
+                    <BillingInfo onBack={handleBackClick} />
                   </div>
                 )}
               </div>
@@ -274,7 +277,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                   <div className="flex items-center justify-between px-5 w-full ">
                     <Button
                       className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
-                      size="large"
+                      size="medium"
                       onClick={handleBackClick}
                     >
                       Back
@@ -284,7 +287,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                       disabled={isFormEmpty || !isValidEmail}
                       onClick={handleNextClick}
                       type="submit"
-                      size="large"
+                      size="medium"
                       className={`${
                         isFormEmpty
                           ? "bg-gray-200 font-bold text-gray-500 !border-none "
