@@ -1,19 +1,19 @@
 //EmailVerification
 
 "use client";
-import React from "react";
-import TextField from "@mui/material/TextField";
-import { styled } from "@mui/system";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import { styled } from "@mui/system";
+import React from "react";
 import { Field, Form } from "react-final-form";
 import BillingInfo from "./BillingInfo";
-import useEmailVerification from "./hooks/useEmailVerification"; // Adjust the path as needed
 import RefAccount from "./RefAccount";
+import useEmailVerification from "./hooks/useEmailVerification"; // Adjust the path as needed
 
 interface LoginFromProps {
   moduleTitle: string;
@@ -68,7 +68,6 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     billingInfo,
     accountNoError,
     open,
-    currentStep,
     handleEmailAddressChange,
     handlePhoneNumberChange,
     handleOTPChange,
@@ -81,6 +80,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     handleClickOpen,
     handleClose,
     validate,
+    currentStep,
   } = useEmailVerification();
 
   let descriptionText = "";
@@ -267,6 +267,8 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                 )}
                 {billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
+                    {/*  */}
+
                     <BillingInfo onBack={handleBackClick} />
                   </div>
                 )}

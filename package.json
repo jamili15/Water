@@ -16,7 +16,8 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-final-form": "^6.5.9"
+    "react-final-form": "^6.5.9",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",

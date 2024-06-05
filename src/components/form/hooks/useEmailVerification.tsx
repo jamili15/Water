@@ -1,11 +1,13 @@
-// useEmailVerification
-
-import { useState, useEffect } from "react";
+import { usePartnerContext } from "@/context/PartnerContext";
+import { useWaterBillingContext } from "@/context/WaterBillingContext";
+import { lookupService } from "@/lib/client";
+import { useState } from "react";
 
 const useEmailVerification = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOTP] = useState("");
+  const [otp, setOtp] = useState("");
+  const [key, setKey] = useState("");
   const [accountNo, setAccountNo] = useState("");
   const [isFormEmpty, setIsFormEmpty] = useState(true);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -17,7 +19,26 @@ const useEmailVerification = () => {
   const [billingInfo, setBillingInfo] = useState(false);
   const [accountNoError, setAccountNoError] = useState(false);
   const [open, setOpen] = useState(false);
+  const { channelId } = usePartnerContext();
   const [currentStep, setCurrentStep] = useState(1);
+  const {
+    setAcctno,
+    setAcctName,
+    setAddress,
+    setClassification,
+    setCoverage,
+    setMonthName,
+    setBillYear,
+    setMeterSize,
+    setPrevReading,
+    setReading,
+    setVolume,
+    setAmount,
+    setBillitems,
+    billitems,
+  } = useWaterBillingContext();
+  const svcOTP = lookupService("OTPService");
+  const svcAcct = lookupService("WaterService");
 
   const formatPhoneNumber = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
@@ -45,7 +66,7 @@ const useEmailVerification = () => {
   };
 
   const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOTP(e.target.value);
+    setOtp(e.target.value);
   };
 
   const handleAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,45 +87,78 @@ const useEmailVerification = () => {
     setShowEmailValidation(!isValidEmail);
   };
 
-  const otpValidationFunction = (enteredOTP: any) => {
-    const correctOTP = "123456";
-    return enteredOTP === correctOTP;
-  };
-  //
-  const handleNextClick = () => {
+  const handleNextClick = async () => {
     if (currentStep === 1) {
       if (emailAddress.trim() === "") {
         setShowEmailValidation(true);
         return;
+      } else {
+        const otp = await svcOTP?.invoke("generateOtp", {
+          partnerid: channelId,
+          contact: { email: emailAddress },
+        });
+        setKey(otp.key);
+        setCurrentStep(2);
       }
-      setCurrentStep(2); // Move to OTP step
     } else if (currentStep === 2) {
-      const isOTPValid = otpValidationFunction(otp);
-      if (!isOTPValid) {
+      const res = await svcOTP?.invoke("verifyOtp", {
+        key: key,
+        otp: otp,
+      });
+      if (res.error === "Invalid Key Value") {
         setShowInvalidKey(true);
       } else {
-        setCurrentStep(3); // Move to account number step
+        setShowOTPField(true);
+        setCurrentStep(3);
         setShowInvalidKey(false);
       }
     } else if (currentStep === 3) {
-      if (accountNo === "240000669") {
+      try {
+        const res = await svcAcct?.invoke("getBilling", {
+          partnerid: channelId,
+          refno: accountNo,
+        });
+        if (res) {
+          setAcctno(res.acctno);
+          setAcctName(res.acctname);
+          setAddress(res.address.text);
+          setClassification(res.classification.objid);
+          setCoverage(`${res.fromdate}-${res.todate}`);
+          setMonthName(res.monthname);
+          setBillYear(res.billtoyear);
+          setMeterSize(res.meter.size.title);
+          setPrevReading(res.prevreading);
+          setReading(res.reading);
+          setVolume(res.volume);
+          setAmount(res.amount);
+          setBillitems(
+            res.billitems.map((item: any) => ({
+              amount: item.amount,
+              discount: item.discount,
+              interest: item.interest,
+              particulars: item.particulars,
+              surcharge: item.surcharge,
+              total: item.total,
+            }))
+          );
+        }
+        console.log(res);
+        setShowAccountNoField(true);
         setBillingInfo(true);
-      } else {
-        setAccountNoError(true);
+      } catch (error) {
+        setBillingInfo(false);
+        console.log("error", error);
       }
     }
   };
 
   const handleBackClick = () => {
     if (currentStep === 3 && !billingInfo) {
-      // If on the account number step, go back to the email and phone number step
       setCurrentStep(1);
     } else if (currentStep === 3 && billingInfo) {
-      // If on the billing information step, go back to the account number step
       setBillingInfo(false);
       setCurrentStep(3);
     } else if (currentStep > 1) {
-      // Otherwise, go back to the previous step
       setCurrentStep(currentStep - 1);
     }
   };
@@ -153,7 +207,6 @@ const useEmailVerification = () => {
     billingInfo,
     accountNoError,
     open,
-    currentStep,
     handleEmailAddressChange,
     handlePhoneNumberChange,
     handleOTPChange,
@@ -166,6 +219,7 @@ const useEmailVerification = () => {
     handleClickOpen,
     handleClose,
     validate,
+    currentStep,
   };
 };
 
