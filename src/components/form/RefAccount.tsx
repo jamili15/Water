@@ -32,11 +32,7 @@ const RefAccount: React.FC<RefAccountProps> = ({
               required
               error={error || (meta.error && meta.touched)}
               helperText={
-                helperText
-                  ? "Incorrect account number."
-                  : meta.error && meta.touched
-                  ? meta.error
-                  : ""
+                helperText || (meta.error && meta.touched ? meta.error : "")
               }
             />
           </div>

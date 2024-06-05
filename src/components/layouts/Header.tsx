@@ -8,12 +8,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ lgucaption, lguLogo, className }) => {
+  const logoSrc = lguLogo ? lguLogo : "/lgu-logo.png";
+
   return (
     <header className={`${className} bg-[#2c3e50] w-full h-14`}>
       <div className="flex gap-5 items-center h-full pl-16 text-xl text-white font-bold">
         <div>
           <Image
-            src={lguLogo || ""}
+            src={logoSrc}
             height={45}
             width={45}
             quality={100}

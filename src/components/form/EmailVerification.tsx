@@ -135,6 +135,11 @@ const EmailVerification: React.FC<LoginFromProps> = ({
               Invalid Key Value
             </p>
           )}
+          {accountNoError && (
+            <p className="text-[#b00020] text-sm text-center bg-[#f5f5dc] p-2 rounded border">
+              Incorrect Account Number. Please check and try again.
+            </p>
+          )}
           <p>{descriptionText}</p>
         </div>
         <Form
@@ -262,45 +267,44 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                     value={accountNo}
                     onChange={handleAccountChange}
                     error={accountNoError}
-                    helperText={accountNoError}
+                    helperText={accountNoError && "Incorrect account number."}
                   />
                 )}
                 {billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
                     {/*  */}
 
-                    <BillingInfo onBack={handleBackClick} />
+                    <BillingInfo />
                   </div>
                 )}
               </div>
-              {!billingInfo && (
-                <>
-                  <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
-                  <div className="flex items-center justify-between px-5 w-full ">
-                    <Button
-                      className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
-                      size="medium"
-                      onClick={handleBackClick}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      disabled={isFormEmpty || !isValidEmail}
-                      onClick={handleNextClick}
-                      type="submit"
-                      size="medium"
-                      className={`${
-                        isFormEmpty
-                          ? "bg-gray-200 font-bold text-gray-500 !border-none "
-                          : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
-                      }`}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
-              )}
+
+              <>
+                <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
+                <div className="flex items-center justify-between px-5 w-full ">
+                  <Button
+                    className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
+                    size="medium"
+                    onClick={handleBackClick}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    disabled={isFormEmpty || !isValidEmail}
+                    onClick={handleNextClick}
+                    type="submit"
+                    size="medium"
+                    className={`${
+                      isFormEmpty
+                        ? "bg-gray-200 font-bold text-gray-500 !border-none "
+                        : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
+                    }`}
+                  >
+                    {billingInfo ? "Confirm Payment" : "Next"}
+                  </Button>
+                </div>
+              </>
             </form>
           )}
         />

@@ -9,6 +9,8 @@ const useEmailVerification = () => {
   const [otp, setOtp] = useState("");
   const [key, setKey] = useState("");
   const [accountNo, setAccountNo] = useState("");
+  const [payerName, setPayerName] = useState("");
+  const [payerAddress, setPayerAddress] = useState("");
   const [isFormEmpty, setIsFormEmpty] = useState(true);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -74,6 +76,14 @@ const useEmailVerification = () => {
     setAccountNoError(false);
   };
 
+  const handlePayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPayerName(e.target.value);
+  };
+
+  const handlePayerAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPayerAddress(e.target.value);
+  };
+
   const checkFormEmptiness = (email: string, phone: string) => {
     setIsFormEmpty(email.trim() === "" && phone.trim() === "");
   };
@@ -118,6 +128,13 @@ const useEmailVerification = () => {
           partnerid: channelId,
           refno: accountNo,
         });
+
+        if (!res || res.error) {
+          setAccountNoError(true);
+          console.log("Invalid Account Number");
+          return;
+        }
+
         if (res) {
           setAcctno(res.acctno);
           setAcctName(res.acctname);
@@ -185,9 +202,6 @@ const useEmailVerification = () => {
     }
     if (!values.otp && showOTPField) {
       errors.otp = "OTP is required";
-    }
-    if (!values.accountNo && showAccountNoField) {
-      errors.accountNo = "value is required";
     }
     return errors;
   };

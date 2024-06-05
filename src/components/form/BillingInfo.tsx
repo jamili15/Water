@@ -29,6 +29,7 @@ const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
     volume,
     billitems,
     penalty,
+    amount,
   } = useWaterBillingContext();
 
   const dataInfo = [
@@ -50,6 +51,10 @@ const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
     { value: reading, label: "Current Reading" },
     { value: volume, label: "Consumption" },
   ];
+
+  const totalAmountDue = [{ remarks: "Total amount due ", amountdue: amount }];
+
+  console.log(amount);
 
   return (
     <div className="w-full flex flex-col gap-5">
@@ -130,28 +135,25 @@ const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
                   </TableCell>
                 </TableRow>
               ))}
+              {totalAmountDue.map((row, index) => (
+                <TableRow key={`${index}`}>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    className="font-bold uppercase"
+                  >
+                    {row.remarks}
+                  </TableCell>
+                  <TableCell />
+                  <TableCell />
+                  <TableCell align="right" className="font-bold">
+                    <Currency currency="Php" amount={row.amountdue} />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
-      <div className="flex items-center justify-between px-5 w-full ">
-        <Button
-          className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
-          size="medium"
-          onClick={onBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="outlined"
-          type="submit"
-          size="medium"
-          className={`   
-            bg-[#6200EE] text-white font-semibold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
-          `}
-        >
-          Confirm Payment
-        </Button>
       </div>
     </div>
   );
