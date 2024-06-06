@@ -84,6 +84,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     currentStep,
     payerInfo,
     loading,
+    handleResendOTP,
   } = useEmailVerification();
 
   let descriptionText = "";
@@ -256,7 +257,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                             Cancel
                           </Button>
                           <Button
-                            onClick={handleClose}
+                            onClick={handleResendOTP}
                             className="bg-[#6200EE] hover:bg-[#7319f0] !text-white"
                             autoFocus
                             size="small"
@@ -313,9 +314,17 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                       loading={loading}
                       loadingPosition="end"
                       variant="outlined"
-                      disabled={isFormEmpty || !isValidEmail}
+                      disabled={
+                        isFormEmpty ||
+                        !isValidEmail ||
+                        (currentStep === 2 && otp.length !== 6) ||
+                        (currentStep === 3 && !accountNo)
+                      }
                       className={`${
-                        isFormEmpty || loading
+                        isFormEmpty ||
+                        loading ||
+                        (currentStep === 2 && otp.length !== 6) ||
+                        (currentStep === 3 && !accountNo)
                           ? "bg-gray-200 font-bold text-gray-500 !border-none"
                           : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
                       }`}

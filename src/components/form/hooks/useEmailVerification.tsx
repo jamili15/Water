@@ -69,7 +69,9 @@ const useEmailVerification = () => {
   };
 
   const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOtp(e.target.value);
+    const otpInput = e.target.value;
+    setOtp(otpInput);
+    setShowInvalidKey(false);
   };
 
   const handleAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +109,11 @@ const useEmailVerification = () => {
         setLoading(false);
       }
     } else if (currentStep === 2) {
+      if (otp.trim().length !== 6) {
+        setShowInvalidKey(true);
+        setLoading(false);
+        return;
+      }
       const res = await svcOTP?.invoke("verifyOtp", {
         key: key,
         otp: otp,
@@ -195,6 +202,22 @@ const useEmailVerification = () => {
     }
   };
 
+  const handleResendOTP = async () => {
+    setLoading(true);
+    try {
+      const otp = await svcOTP?.invoke("generateOtp", {
+        partnerid: channelId,
+        contact: { email: emailAddress },
+      });
+      setKey(otp.key);
+      setLoading(false);
+      setOpen(false); // Close the dialog after successful resend
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      setLoading(false);
+    }
+  };
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
@@ -218,6 +241,7 @@ const useEmailVerification = () => {
     if (!values.otp && showOTPField) {
       errors.otp = "OTP is required";
     }
+
     return errors;
   };
 
@@ -251,6 +275,7 @@ const useEmailVerification = () => {
     currentStep,
     payerInfo,
     loading,
+    handleResendOTP,
   };
 };
 
