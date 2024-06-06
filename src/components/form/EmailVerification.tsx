@@ -1,4 +1,4 @@
-//EmailVerification
+// EmailVerification.tsx
 
 "use client";
 import Button from "@mui/material/Button";
@@ -13,7 +13,10 @@ import React from "react";
 import { Field, Form } from "react-final-form";
 import BillingInfo from "./BillingInfo";
 import RefAccount from "./RefAccount";
-import useEmailVerification from "./hooks/useEmailVerification"; // Adjust the path as needed
+import useEmailVerification from "./hooks/useEmailVerification";
+import PayerInfo from "./PayerInfo";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SendIcon from "@mui/icons-material/Send";
 
 interface LoginFromProps {
   moduleTitle: string;
@@ -62,8 +65,6 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     isFormEmpty,
     isValidEmail,
     showEmailValidation,
-    showOTPField,
-    showAccountNoField,
     showInvalidKey,
     billingInfo,
     accountNoError,
@@ -81,6 +82,8 @@ const EmailVerification: React.FC<LoginFromProps> = ({
     handleClose,
     validate,
     currentStep,
+    payerInfo,
+    loading,
   } = useEmailVerification();
 
   let descriptionText = "";
@@ -99,8 +102,11 @@ const EmailVerification: React.FC<LoginFromProps> = ({
       descriptionText = "Please enter your Account number.";
       subTitleText = "Initial Information";
     }
-  } else {
+  } else if (currentStep === 4) {
     subTitleText = "Billing Information";
+  } else if (currentStep === 5) {
+    subTitleText = "Payment Information";
+    descriptionText = "Please fill in the Payer Name and Payer Address";
   }
 
   const ariaLabel = { "aria-label": "description" };
@@ -219,6 +225,7 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                         </div>
                       )}
                     />
+
                     <div className="!w-full">
                       <Button
                         className="float-right hover:bg-transparent mt-5 text-gray-500"
@@ -270,41 +277,54 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                     helperText={accountNoError && "Incorrect account number."}
                   />
                 )}
-                {billingInfo && (
+                {currentStep === 4 && billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
-                    {/*  */}
-
                     <BillingInfo />
                   </div>
                 )}
-              </div>
 
-              <>
-                <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
-                <div className="flex items-center justify-between px-5 w-full ">
-                  <Button
-                    className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
-                    size="medium"
-                    onClick={handleBackClick}
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    disabled={isFormEmpty || !isValidEmail}
-                    onClick={handleNextClick}
-                    type="submit"
-                    size="medium"
-                    className={`${
-                      isFormEmpty
-                        ? "bg-gray-200 font-bold text-gray-500 !border-none "
-                        : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
-                    }`}
-                  >
-                    {billingInfo ? "Confirm Payment" : "Next"}
-                  </Button>
-                </div>
-              </>
+                {currentStep === 5 && billingInfo && payerInfo && (
+                  <div className="flex flex-col items-center justify-center w-full">
+                    <PayerInfo onBack={handleBackClick} />
+                  </div>
+                )}
+              </div>
+              {!payerInfo && (
+                <>
+                  <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
+                  <div className="flex items-center justify-between px-5 w-full ">
+                    <Button
+                      className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
+                      size="medium"
+                      onClick={handleBackClick}
+                    >
+                      Back
+                    </Button>
+                    <LoadingButton
+                      size="medium"
+                      onClick={handleNextClick}
+                      endIcon={
+                        <SendIcon
+                          className={`${
+                            loading ? "block text-transparent" : "hidden"
+                          }`}
+                        />
+                      }
+                      loading={loading}
+                      loadingPosition="end"
+                      variant="outlined"
+                      disabled={isFormEmpty || !isValidEmail}
+                      className={`${
+                        isFormEmpty || loading
+                          ? "bg-gray-200 font-bold text-gray-500 !border-none"
+                          : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
+                      }`}
+                    >
+                      {billingInfo ? "Confirm Payment" : "Next"}
+                    </LoadingButton>
+                  </div>
+                </>
+              )}
             </form>
           )}
         />

@@ -1,6 +1,7 @@
 import { usePartnerContext } from "@/context/PartnerContext";
 import { useWaterBillingContext } from "@/context/WaterBillingContext";
 import { lookupService } from "@/lib/client";
+import React from "react";
 import { useState } from "react";
 
 const useEmailVerification = () => {
@@ -9,8 +10,6 @@ const useEmailVerification = () => {
   const [otp, setOtp] = useState("");
   const [key, setKey] = useState("");
   const [accountNo, setAccountNo] = useState("");
-  const [payerName, setPayerName] = useState("");
-  const [payerAddress, setPayerAddress] = useState("");
   const [isFormEmpty, setIsFormEmpty] = useState(true);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -19,10 +18,12 @@ const useEmailVerification = () => {
   const [showAccountNoField, setShowAccountNoField] = useState(false);
   const [showInvalidKey, setShowInvalidKey] = useState(false);
   const [billingInfo, setBillingInfo] = useState(false);
+  const [payerInfo, setPayerInfo] = useState(false);
   const [accountNoError, setAccountNoError] = useState(false);
   const [open, setOpen] = useState(false);
   const { channelId } = usePartnerContext();
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = React.useState(false);
   const {
     setAcctno,
     setAcctName,
@@ -76,14 +77,6 @@ const useEmailVerification = () => {
     setAccountNoError(false);
   };
 
-  const handlePayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPayerName(e.target.value);
-  };
-
-  const handlePayerAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPayerAddress(e.target.value);
-  };
-
   const checkFormEmptiness = (email: string, phone: string) => {
     setIsFormEmpty(email.trim() === "" && phone.trim() === "");
   };
@@ -98,9 +91,11 @@ const useEmailVerification = () => {
   };
 
   const handleNextClick = async () => {
+    setLoading(true);
     if (currentStep === 1) {
       if (emailAddress.trim() === "") {
         setShowEmailValidation(true);
+        setLoading(false);
         return;
       } else {
         const otp = await svcOTP?.invoke("generateOtp", {
@@ -109,6 +104,7 @@ const useEmailVerification = () => {
         });
         setKey(otp.key);
         setCurrentStep(2);
+        setLoading(false);
       }
     } else if (currentStep === 2) {
       const res = await svcOTP?.invoke("verifyOtp", {
@@ -117,6 +113,7 @@ const useEmailVerification = () => {
       });
       if (res.error === "Invalid Key Value") {
         setShowInvalidKey(true);
+        setLoading(false);
       } else {
         setShowOTPField(true);
         setCurrentStep(3);
@@ -132,6 +129,7 @@ const useEmailVerification = () => {
         if (!res || res.error) {
           setAccountNoError(true);
           console.log("Invalid Account Number");
+          setLoading(false);
           return;
         }
 
@@ -162,11 +160,18 @@ const useEmailVerification = () => {
         console.log(res);
         setShowAccountNoField(true);
         setBillingInfo(true);
+        setCurrentStep(4);
       } catch (error) {
         setBillingInfo(false);
         console.log("error", error);
+        setLoading(false);
       }
+    } else if (currentStep === 4) {
+      setPayerInfo(true);
+      setLoading(true);
+      setCurrentStep(5);
     }
+    setLoading(false);
   };
 
   const handleBackClick = () => {
@@ -174,7 +179,17 @@ const useEmailVerification = () => {
       setCurrentStep(1);
     } else if (currentStep === 3 && billingInfo) {
       setBillingInfo(false);
-      setCurrentStep(3);
+      setShowAccountNoField(false); // Reset relevant state variables
+      setCurrentStep(2); // Go back to step 2
+    } else if (currentStep === 4) {
+      // Handle going back from billingInfo step
+      setBillingInfo(false);
+      setShowAccountNoField(false); // Reset relevant state variables
+      setCurrentStep(3); // Go back to step 3
+    } else if (currentStep === 5) {
+      // Handle going back from PayerInfo step
+      setPayerInfo(false);
+      setCurrentStep(4); // Go back to billingInfo step
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
@@ -234,6 +249,8 @@ const useEmailVerification = () => {
     handleClose,
     validate,
     currentStep,
+    payerInfo,
+    loading,
   };
 };
 
