@@ -1,8 +1,8 @@
+import Bill from "@/components/WaterBilling/models/Bill";
+import BillItem from "@/components/WaterBilling/models/BillItem";
 import { usePartnerContext } from "@/context/PartnerContext";
 import { useWaterBillingContext } from "@/context/WaterBillingContext";
 import { lookupService } from "@/lib/client";
-import Bill from "@/models/Bill";
-import BillItem from "@/models/BillItem";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
