@@ -1,6 +1,8 @@
 // EmailVerification.tsx
 
 "use client";
+import SendIcon from "@mui/icons-material/Send";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -11,12 +13,7 @@ import TextField from "@mui/material/TextField";
 import { styled } from "@mui/system";
 import React from "react";
 import { Field, Form } from "react-final-form";
-import BillingInfo from "./BillingInfo";
-import RefAccount from "./RefAccount";
-import useEmailVerification from "./hooks/useEmailVerification";
-import PayerInfo from "./PayerInfo";
-import LoadingButton from "@mui/lab/LoadingButton";
-import SendIcon from "@mui/icons-material/Send";
+import useEmailVerification from "../../form/hooks/useEmailVerification";
 
 interface LoginFromProps {
   moduleTitle: string;
@@ -270,15 +267,15 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                     </div>
                   </div>
                 )}
-                {currentStep === 3 && !billingInfo && (
+                {/* {currentStep === 3 && !billingInfo && (
                   <RefAccount
                     value={accountNo}
                     onChange={handleAccountChange}
                     error={accountNoError}
                     helperText={accountNoError && "Incorrect account number."}
                   />
-                )}
-                {currentStep === 4 && billingInfo && (
+                )} */}
+                {/* {currentStep === 4 && billingInfo && (
                   <div className="flex flex-col items-center justify-center w-full">
                     <BillingInfo />
                   </div>
@@ -288,52 +285,50 @@ const EmailVerification: React.FC<LoginFromProps> = ({
                   <div className="flex flex-col items-center justify-center w-full">
                     <PayerInfo onBack={handleBackClick} />
                   </div>
-                )}
+                )}*/}
               </div>
-              {!payerInfo && (
-                <>
-                  <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
-                  <div className="flex items-center justify-between px-5 w-full ">
-                    <Button
-                      className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
-                      size="medium"
-                      onClick={handleBackClick}
-                    >
-                      Back
-                    </Button>
-                    <LoadingButton
-                      size="medium"
-                      onClick={handleNextClick}
-                      endIcon={
-                        <SendIcon
-                          className={`${
-                            loading ? "block text-transparent" : "hidden"
-                          }`}
-                        />
-                      }
-                      loading={loading}
-                      loadingPosition="end"
-                      variant="outlined"
-                      disabled={
-                        isFormEmpty ||
-                        !isValidEmail ||
-                        (currentStep === 2 && otp.length !== 6) ||
-                        (currentStep === 3 && !accountNo)
-                      }
-                      className={`${
-                        isFormEmpty ||
-                        loading ||
-                        (currentStep === 2 && otp.length !== 6) ||
-                        (currentStep === 3 && !accountNo)
-                          ? "bg-gray-200 font-bold text-gray-500 !border-none"
-                          : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
-                      }`}
-                    >
-                      {billingInfo ? "Confirm Payment" : "Next"}
-                    </LoadingButton>
-                  </div>
-                </>
-              )}
+              <>
+                <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
+                <div className="flex items-center justify-between px-5 w-full ">
+                  <Button
+                    className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
+                    size="medium"
+                    onClick={handleBackClick}
+                  >
+                    Back
+                  </Button>
+                  <LoadingButton
+                    size="medium"
+                    onClick={handleNextClick}
+                    endIcon={
+                      <SendIcon
+                        className={`${
+                          loading ? "block text-transparent" : "hidden"
+                        }`}
+                      />
+                    }
+                    loading={loading}
+                    loadingPosition="end"
+                    variant="outlined"
+                    disabled={
+                      isFormEmpty ||
+                      !isValidEmail ||
+                      (currentStep === 2 && otp.length !== 6) ||
+                      (currentStep === 3 && !accountNo)
+                    }
+                    className={`${
+                      isFormEmpty ||
+                      loading ||
+                      (currentStep === 2 && otp.length !== 6) ||
+                      (currentStep === 3 && !accountNo)
+                        ? "bg-gray-200 font-bold text-gray-500 !border-none"
+                        : "bg-[#6200EE] !text-white font-bold hover:bg-[#7319f0] hover:shadow-[0_3px_6px_0_rgba(0,0,0,0.3)] duration-200"
+                    }`}
+                  >
+                    {billingInfo ? "Confirm Payment" : "Next"}
+                  </LoadingButton>
+                </div>
+              </>
             </form>
           )}
         />

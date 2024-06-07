@@ -1,12 +1,14 @@
 "use client";
 
-import EmailVerification from "@/components/form/EmailVerification";
+import EmailVerification from "@/components/EmailVerification/forms/Main";
 import MasterLayout from "@/components/layouts/MasterLayout";
 import { usePartnerContext } from "@/context/PartnerContext";
 import { useEffect } from "react";
 
 export default function Page({ params }: { params: { id: string } }) {
   const { title, setId, resources } = usePartnerContext();
+
+  const handler = () => {};
 
   useEffect(() => {
     if (params.id) {

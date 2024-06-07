@@ -1,8 +1,7 @@
 import { usePartnerContext } from "@/context/PartnerContext";
 import { useWaterBillingContext } from "@/context/WaterBillingContext";
 import { lookupService } from "@/lib/client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const useEmailVerification = () => {
   const [emailAddress, setEmailAddress] = useState("");
@@ -24,24 +23,8 @@ const useEmailVerification = () => {
   const { channelId } = usePartnerContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = React.useState(false);
-  const {
-    setAcctno,
-    setAcctName,
-    setAddress,
-    setClassification,
-    setCoverage,
-    setMonthName,
-    setBillYear,
-    setMeterSize,
-    setPrevReading,
-    setReading,
-    setVolume,
-    setAmount,
-    setBillitems,
-    billitems,
-  } = useWaterBillingContext();
+  const { setAcctno } = useWaterBillingContext();
   const svcOTP = lookupService("OTPService");
-  const svcAcct = lookupService("WaterService");
 
   const formatPhoneNumber = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
@@ -121,62 +104,7 @@ const useEmailVerification = () => {
       if (res.error === "Invalid Key Value") {
         setShowInvalidKey(true);
         setLoading(false);
-      } else {
-        setShowOTPField(true);
-        setCurrentStep(3);
-        setShowInvalidKey(false);
       }
-    } else if (currentStep === 3) {
-      try {
-        const res = await svcAcct?.invoke("getBilling", {
-          partnerid: channelId,
-          refno: accountNo,
-        });
-
-        if (!res || res.error) {
-          setAccountNoError(true);
-          console.log("Invalid Account Number");
-          setLoading(false);
-          return;
-        }
-
-        if (res) {
-          setAcctno(res.acctno);
-          setAcctName(res.acctname);
-          setAddress(res.address.text);
-          setClassification(res.classification.objid);
-          setCoverage(`${res.fromdate}-${res.todate}`);
-          setMonthName(res.monthname);
-          setBillYear(res.billtoyear);
-          setMeterSize(res.meter.size.title);
-          setPrevReading(res.prevreading);
-          setReading(res.reading);
-          setVolume(res.volume);
-          setAmount(res.amount);
-          setBillitems(
-            res.billitems.map((item: any) => ({
-              amount: item.amount,
-              discount: item.discount,
-              interest: item.interest,
-              particulars: item.particulars,
-              surcharge: item.surcharge,
-              total: item.total,
-            }))
-          );
-        }
-        console.log(res);
-        setShowAccountNoField(true);
-        setBillingInfo(true);
-        setCurrentStep(4);
-      } catch (error) {
-        setBillingInfo(false);
-        console.log("error", error);
-        setLoading(false);
-      }
-    } else if (currentStep === 4) {
-      setPayerInfo(true);
-      setLoading(true);
-      setCurrentStep(5);
     }
     setLoading(false);
   };
