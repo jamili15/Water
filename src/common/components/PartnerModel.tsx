@@ -43,14 +43,13 @@ export const PartnerProvider: React.FC<PartnerContextTypeProps> = ({
           setTitle(data.title || "");
           setName(data.name || "");
           setChannelId(data.channelid || "");
-          let hostUrl = process.env.FILIPIZEN_HOST;
+          let hostUrl = process.env.NEXT_PUBLIC_FILIPIZEN_HOST;
           if (hostUrl) {
             if (!hostUrl.startsWith("http://")) {
               hostUrl = "http://" + hostUrl;
               setResources(`${hostUrl}/resources/${data.channelid}.png`);
             }
-            let url = hostUrl;
-            setResources(`${url}/resources/${data.channelid}.png`);
+            setResources(`${hostUrl}/resources/${data.channelid}.png`);
           } else {
             console.error("FILIPIZEN_HOST is not defined.");
           }
