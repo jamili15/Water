@@ -1,8 +1,7 @@
-import Bill from "@/components/WaterBilling/models/Bill";
-import BillItem from "@/components/WaterBilling/models/BillItem";
-import { usePartnerContext } from "@/context/PartnerContext";
-import { useWaterBillingContext } from "@/context/WaterBillingContext";
-import { lookupService } from "@/lib/client";
+import Currency from "@/common/components/Currency";
+import { usePartnerContext } from "@/common/components/PartnerModel";
+import { lookupService } from "@/common/lib/client";
+import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,58 +9,63 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { MouseEventHandler, useEffect, useState } from "react";
-import Currency from "../ui/Currency";
+import { useEffect, useState } from "react";
+import Bill from "./models/Bill";
+import BillItem from "./models/BillItem";
 
-interface BillInfoProps {
-  onBack?: MouseEventHandler<HTMLButtonElement>;
+interface BillingInfoProps {
+  accountNo: string;
 }
 
-const BillingInfo: React.FC<BillInfoProps> = ({ onBack }) => {
-  const { acctno } = useWaterBillingContext();
-  const svcAcct = lookupService("WaterService");
+const BillingInfo: React.FC<BillingInfoProps> = ({ accountNo }) => {
   const { channelId } = usePartnerContext();
-  const [bill, setBill] = useState<Bill>();
+  const svc = lookupService("WaterService");
+  const [bill, setBill] = useState<Bill | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const loadData = async () => {
-    try {
-      const res = await svcAcct?.invoke("getBilling", {
-        partnerid: channelId,
-        refno: acctno,
-      });
-      setBill(new Bill(res));
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await svc?.invoke("getBilling", {
+      refno: accountNo,
+      partnerid: channelId,
+    });
+    setBill(new Bill(res));
+    setLoading(false);
   };
-
   useEffect(() => {
     loadData();
   }, []);
 
-  const dataInfo = (bill: any) => [
-    { value: bill?.acctno, label: "Account No." },
-    { value: bill?.acctname, label: "Account Name" },
-    { value: bill?.address, label: "Address" },
-    { value: bill?.classification, label: "Classification" },
-    { value: bill?.coverage, label: "Coverage" },
+  const dataInfo = (bill: Bill | null) => [
+    { value: bill?.acctno || "", label: "Account No." },
+    { value: bill?.acctname || "", label: "Account Name" },
+    { value: bill?.address || "", label: "Address" },
+    { value: bill?.classification || "", label: "Classification" },
+    { value: bill?.coverage || "", label: "Coverage" },
   ];
 
-  const dataMonthYear = (bill: any) => [
-    { value: bill?.billmonth, label: "Bill Month" },
-    { value: bill?.billyear, label: "Bill Year" },
+  const dataMonthYear = (bill: Bill | null) => [
+    { value: bill?.billmonth || "", label: "Bill Month" },
+    { value: bill?.billyear?.toString() || "", label: "Bill Year" },
   ];
 
-  const dataReading = (bill: any) => [
-    { value: bill?.metersize, label: "Meter Size" },
-    { value: bill?.prevreading, label: "Previous Reading" },
-    { value: bill?.reading, label: "Current Reading" },
-    { value: bill?.volume, label: "Consumption" },
+  const dataReading = (bill: Bill | null) => [
+    { value: bill?.metersize || "", label: "Meter Size" },
+    { value: bill?.prevreading?.toString() || "", label: "Previous Reading" },
+    { value: bill?.reading?.toString() || "", label: "Current Reading" },
+    { value: bill?.volume?.toString() || "", label: "Consumption" },
   ];
 
-  const totalAmountDue = (bill: any) => [
-    { remarks: "Total amount due ", amountdue: bill?.amount },
+  const totalAmountDue = (bill: Bill | null) => [
+    { remarks: "Total amount due", amountdue: bill?.amount || 0 },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-5">

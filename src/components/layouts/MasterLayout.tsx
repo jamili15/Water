@@ -14,11 +14,9 @@ const MasterLayout: React.FC<HomeProps> = ({
   lguLogo,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-between  min-h-screen">
+    <div className="flex flex-col items-center justify-between ">
       <Header lguLogo={lguLogo} lgucaption={lgucaption} />
-      <main className="flex-grow flex items-center justify-center">
-        {children}
-      </main>
+      <main className="flex justify-start p-20">{children}</main>
       <Footer copyright={"@Copyright 2024 Filipizen"} />
     </div>
   );

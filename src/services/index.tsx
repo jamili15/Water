@@ -1,9 +1,9 @@
-import * as OTPService from "../components/EmailVerification/services/OTPService";
-import * as CloudPartnerService from "./CloudPartnerService";
+import * as CloudPartnerService from "../common/services/CloudPartnerService";
+import * as OTPService from "../common/services/OTPService";
 import * as WaterService from "./WaterService";
 
 export const services = {
-  WaterService,
   OTPService,
   CloudPartnerService,
+  WaterService,
 };

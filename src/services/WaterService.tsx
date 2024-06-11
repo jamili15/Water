@@ -1,4 +1,4 @@
-import Service from "@/lib/server/remote-service";
+import Service from "@/common/lib/server/remote-service";
 
 export const getBilling = async ({
   partnerid,
