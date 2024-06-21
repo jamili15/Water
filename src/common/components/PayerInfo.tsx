@@ -15,12 +15,12 @@ interface PaymentInfoProps {
   description?: string;
   onChangeAccount?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSuccess: () => void;
-  onBack: () => void;
+  onCancel: () => void;
 }
 
 const PaymentInfo: React.FC<PaymentInfoProps> = ({
   moduleTitle,
-  onBack,
+  onCancel,
   onSuccess,
 }) => {
   const {
@@ -106,7 +106,7 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({
                   <Button
                     className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
                     size="medium"
-                    onClick={onBack}
+                    onClick={onCancel}
                   >
                     Back
                   </Button>
