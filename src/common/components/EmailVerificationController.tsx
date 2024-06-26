@@ -77,12 +77,11 @@ const useEmailVerification = () => {
     setLoading(true);
     setShowPhoneValidation(false);
     const phoneNum = phoneNumber.replace(/\D/g, "");
-    console.log("phone number => ", phoneNum.length);
     if (emailAddress.trim() === "") {
       setShowEmailValidation(true);
       setLoading(false);
       return;
-    } else if (phoneNum.length > 0 && phoneNum.length < 12) {
+    } else if (phoneNum.length > 0 && phoneNum.length < 11) {
       setShowPhoneValidation(true);
       setLoading(false);
       return;
