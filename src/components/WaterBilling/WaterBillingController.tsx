@@ -1,6 +1,7 @@
 import { usePartnerContext } from "@/common/components/PartnerModel";
 import { lookupService } from "@/common/lib/client";
 import React, { useState } from "react";
+import Bill from "./models/Bill";
 
 const WaterBillingController = () => {
   const [accountNo, setAccountNo] = useState("");
@@ -9,6 +10,7 @@ const WaterBillingController = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = React.useState(false);
   const { channelId } = usePartnerContext();
+  const [bill, setBill] = useState<Bill | null>(null);
   const svc = lookupService("WaterService");
 
   const handleAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +28,8 @@ const WaterBillingController = () => {
       if (res === undefined) {
         setAccountNoError(true);
       } else {
+        setBill(new Bill(res));
+
         setCurrentStep(2);
       }
     } catch (error) {
@@ -69,6 +73,7 @@ const WaterBillingController = () => {
     currentStep,
     accountNo,
     accountNoError,
+    bill,
     handleClose,
     handleClickOpen,
     handleBackClick,

@@ -1,6 +1,4 @@
 import Currency from "@/common/components/Currency";
-import { usePartnerContext } from "@/common/components/PartnerModel";
-import { lookupService } from "@/common/lib/client";
 import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -9,32 +7,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useEffect, useState } from "react";
 import Bill from "./models/Bill";
 import BillItem from "./models/BillItem";
 
 interface BillingInfoProps {
-  accountNo: string;
+  bill: Bill | null;
+  loading: boolean;
 }
 
-const BillingInfo: React.FC<BillingInfoProps> = ({ accountNo }) => {
-  const { channelId } = usePartnerContext();
-  const svc = lookupService("WaterService");
-  const [bill, setBill] = useState<Bill | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const loadData = async () => {
-    const res = await svc?.invoke("getBilling", {
-      refno: accountNo,
-      partnerid: channelId,
-    });
-    setBill(new Bill(res));
-    setLoading(false);
-  };
-  useEffect(() => {
-    loadData();
-  }, []);
-
+const BillingInfo: React.FC<BillingInfoProps> = ({ bill, loading }) => {
   const dataInfo = (bill: Bill | null) => [
     { value: bill?.acctno || "", label: "Account No." },
     { value: bill?.acctname || "", label: "Account Name" },
@@ -59,7 +40,7 @@ const BillingInfo: React.FC<BillingInfoProps> = ({ accountNo }) => {
     { remarks: "Total amount due", amountdue: bill?.amount || 0 },
   ];
 
-  if (loading) {
+  if (loading || !bill) {
     return (
       <div className="flex justify-center items-center h-full">
         <CircularProgress />

@@ -12,17 +12,19 @@ import WaterBillingController from "./WaterBillingController";
 
 interface WaterBillingProps {
   moduleTitle: string;
+  onSuccess: () => void;
+  onCancel: () => void;
   subTitle?: string;
   description?: string;
+  billInfo: any;
   onChangeAccount?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSuccess: () => void;
-  onBack: () => void;
 }
 
 const WaterBilling: React.FC<WaterBillingProps> = ({
   moduleTitle,
-  onBack,
+  onCancel,
   onSuccess,
+  billInfo,
 }) => {
   const {
     onSubmit,
@@ -34,9 +36,11 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
     handleBackClick,
     handleAccountClick,
     handleBillingClick,
+    bill,
   } = WaterBillingController();
 
   const handlePaymentClick = () => {
+    billInfo(bill);
     handleBillingClick(onSuccess);
   };
 
@@ -48,9 +52,6 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
     subTitleText = "Initial Information";
   } else if (currentStep === 2) {
     subTitleText = "Billing Information";
-  } else if (currentStep === 3) {
-    subTitleText = "Payment Information";
-    descriptionText = "Please fill in the Payer Name and Payer Address";
   }
 
   return (
@@ -67,7 +68,7 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
         <Form
           onSubmit={onSubmit}
           render={({ handleSubmit }) => (
-            <form
+            <div
               className="flex flex-col items-start justify-start gap-5"
               onSubmit={handleSubmit}
             >
@@ -82,7 +83,7 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
                 )}
                 {currentStep === 2 && (
                   <div className="flex flex-col items-center justify-center w-full">
-                    <BillingInfo accountNo={accountNo} />
+                    <BillingInfo bill={bill} loading={loading} />
                   </div>
                 )}
               </div>
@@ -92,7 +93,7 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
                   <Button
                     className="font-bold text-[#6200EE] hover:bg-[#b898e626] px-5"
                     size="medium"
-                    onClick={currentStep === 1 ? onBack : handleBackClick}
+                    onClick={currentStep === 1 ? onCancel : handleBackClick}
                   >
                     Back
                   </Button>
@@ -119,7 +120,7 @@ const WaterBilling: React.FC<WaterBillingProps> = ({
                   </LoadingButton>
                 </div>
               </>
-            </form>
+            </div>
           )}
         />
       </div>
