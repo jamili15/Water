@@ -1,4 +1,4 @@
-import { PartnerProvider } from "@/common/components/PartnerModel";
+import { PartnerProvider } from "@/common/components/Email/PartnerModel";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
