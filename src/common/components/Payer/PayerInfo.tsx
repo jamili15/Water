@@ -1,64 +1,21 @@
 import { Button } from "@/common/io/Button";
 import { Text } from "@/common/io/Text";
-import { lookupService } from "@/common/lib/client";
 import { ActionBar } from "@/common/ui/ActionBar";
 import Card from "@/common/ui/Card";
 import { required } from "@/common/validators";
 import Currency from "../../io/Currency";
-import { usePartnerContext } from "../Email/PartnerModel";
 
 const PayerInfo = (props: any) => {
   const bill = props.formValues.bill;
-  const { partner, id } = usePartnerContext();
-  const svc = lookupService("EPaymentService");
   let descriptionText =
     "Please confirm by filling in the name and address of the Payer for your electronic Official Receipt. Click Continue to proceed with payment.";
 
   const handleClickNext = async () => {
-    const order = {
-      origin: "filipizen",
-      txntype: bill?.txntype,
-      txntypename: bill?.txntypename,
-      refno: bill?.acctno,
-      amount: bill?.amount,
-      particulars: bill?.billno,
-      partner: {
-        id: partner?.channelid,
-        title: partner?.title,
-        group: {
-          objid: partner?.group.objid,
-          name: partner?.group.name,
-          title: partner?.group.title,
-        },
-      },
-      payOption: { objid: "PAYMAYA" },
-      paidby: props.formValues.payername,
-      paidbyaddress: props.formValues.payeraddress,
-      email: props.formValues.email,
-      mobileno: props.formValues.phone,
-      items: bill?.items,
-      info: {
-        data: bill,
-      },
-    };
-
-    const res = await svc?.invoke("checkout", {
-      order: order,
-      partner: {
-        id: partner?.channelid,
-        name: partner?.name,
-        title: partner?.title,
-        group: {
-          objid: partner?.group.objid,
-          name: partner?.group.name,
-          title: partner?.group.title,
-        },
-      },
-      redirectUrl: {
-        cancelUrl: `http://localhost:3001/partners/${id}/water/billing`,
-        successUrl: `http://localhost:3001/partners/${id}/water/billing`,
-      },
-    });
+    console.log("bill => ", bill);
+    console.log("Email => ", props.formValues.email);
+    console.log("Phone => ", props.formValues.phone);
+    console.log("Payer Name => ", props.formValues.payername);
+    console.log("Payer Address => ", props.formValues.payeraddress);
   };
 
   return (
