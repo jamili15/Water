@@ -1,20 +1,17 @@
 import { Button } from "@/common/io/Button";
 import { Text } from "@/common/io/Text";
-import { lookupService } from "@/common/lib/client";
 import { ActionBar } from "@/common/ui/ActionBar";
 import Card from "@/common/ui/Card";
 import { required } from "@/common/validators";
 import Currency from "../../io/Currency";
-import { usePartnerContext } from "../Email/PartnerModel";
 
 const PayerInfo = (props: any) => {
   const bill = props.formValues.bill;
-  const { partner, id } = usePartnerContext();
-  const svc = lookupService("EPaymentService");
   let descriptionText =
     "Please confirm by filling in the name and address of the Payer for your electronic Official Receipt. Click Continue to proceed with payment.";
 
   const handleClickNext = async () => {
+<<<<<<< HEAD
     const order = {
       origin: "filipizen",
       txntype: bill?.txntype,
@@ -59,6 +56,13 @@ const PayerInfo = (props: any) => {
         successUrl: `http://localhost:3001/partners/${id}/water/billing`,
       },
     });
+=======
+    console.log("bill => ", bill);
+    console.log("Email => ", props.formValues.email);
+    console.log("Phone => ", props.formValues.phone);
+    console.log("Payer Name => ", props.formValues.payername);
+    console.log("Payer Address => ", props.formValues.payeraddress);
+>>>>>>> 2c35c214eb9ad901d0c06cc845636bf155b0762b
   };
 
   return (

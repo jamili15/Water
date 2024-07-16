@@ -53,10 +53,10 @@ const Table: React.FC<Props> = ({ columns, items, totalAmountDue }) => {
                 >
                   {typeof item[column.field] === "number" ? (
                     <Currency amount={item[column.field]} />
-                  ) : item[column.field] ? (
-                    <p>{item[column.field]}</p>
                   ) : (
-                    <Currency amount={0} />
+                    item[column.field] || (
+                      <Currency amount={item[column.field] || 0} />
+                    )
                   )}
                 </TableCell>
               ))}
