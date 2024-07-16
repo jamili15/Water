@@ -1,6 +1,5 @@
 import { Button } from "@/common/io/Button";
 import { Email } from "@/common/io/Email";
-
 import { Text } from "@/common/io/Text";
 import { lookupService } from "@/common/lib/client";
 import { ActionBar } from "@/common/ui/ActionBar";
@@ -96,6 +95,7 @@ const EmailVerification = (props: any) => {
           placeholder="(0000) 000-0000"
           variant="standard"
         />
+        <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
         <ActionBar>
           <Button
             onClick={props.movePrevStep}

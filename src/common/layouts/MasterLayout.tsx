@@ -1,7 +1,6 @@
 import React from "react";
 import Footer from "./Footer";
 import Header from "./Header";
-import { usePartnerContext } from "../components/Email/PartnerModel";
 
 interface HomeProps {
   children: React.ReactNode;
@@ -14,26 +13,15 @@ const MasterLayout: React.FC<HomeProps> = ({
   lgucaption,
   lguLogo,
 }) => {
-  const { id } = usePartnerContext();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F5F5]">
-      <Header
-        lguLogo={lguLogo}
-        lgucaption={lgucaption}
-        href={`${baseUrl}/partners/${id}`}
-      />
+      <Header lguLogo={lguLogo} lgucaption={lgucaption} />
       <div className="flex flex-col flex-1 pt-20">
         <main className="w-full flex justify-center items-start py-5 flex-1">
           {children}
         </main>
       </div>
-      <Footer
-        copyright={"@Copyright 2024 "}
-        filipizen="Filipizen"
-        href={`${baseUrl}/partners`}
-      />
+      <Footer copyright={"@Copyright 2024 Filipizen"} />
     </div>
   );
 };
