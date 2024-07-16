@@ -10,7 +10,7 @@ import BillingInfo from "@/components/WaterBilling/BillingInfo";
 import { useEffect } from "react";
 
 export default function Page({ params }: { params: { id: string } }) {
-  const { title, setId, resources } = usePartnerContext();
+  const { setId, resources, partner } = usePartnerContext();
   let moduleTitle = "waterworks online billing and payment";
 
   useEffect(() => {
@@ -41,8 +41,9 @@ export default function Page({ params }: { params: { id: string } }) {
       Component: PayerInfo,
     },
   ];
+
   return (
-    <MasterLayout lgucaption={title} lguLogo={resources}>
+    <MasterLayout lgucaption={partner?.title} lguLogo={resources}>
       <PageFlow title={moduleTitle} pages={pages} />
     </MasterLayout>
   );

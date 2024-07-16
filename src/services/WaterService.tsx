@@ -10,6 +10,7 @@ export const getBilling = async ({
 }): Promise<Bill> => {
   const svc = Service.lookup(`${partnerid}:OnlineWaterBillingService`, "water");
   const data = await svc.invoke("getBilling", { refno: refno });
+  let txntype = data.txntype ?? "water";
 
   const items: BillItem[] = data.billitems.map((item: any) => {
     const surcharge = item.surcharge !== null ? item.surcharge : 0;
@@ -24,24 +25,32 @@ export const getBilling = async ({
       interest: item.interest,
       discount: item.discount,
       total: item.total,
+      sortorder: item.sortorder,
       penalty: penalty,
     };
   });
 
   const bill: Bill = {
     acctno: data.acctno,
-    acctname: data.acctname,
-    address: data.address.text,
+    acctid: data.acctid,
+    billid: data.billid,
     classification: data.classification.objid,
-    coverage: "",
-    billmonth: data.monthname,
-    billyear: data.billtoyear,
-    metersize: data.meter.size.title,
-    prevreading: data.prevreading,
+    address: data.address.text,
+    location: data.location.text,
+    acctname: data.acctname,
+    billno: data.billno,
+    monthname: data.monthname,
+    year: data.year,
+    billtoyear: data.billtoyear,
+    meter: data.meter.size.title,
     reading: data.reading,
+    prevreading: data.prevreading,
     volume: data.volume,
-    amount: data.amount,
     items: items,
+    amount: data.amount,
+    pmttxntype: data.pmttxntype,
+    txntypename: data.txntypename,
+    txntype: txntype,
   };
 
   return bill;

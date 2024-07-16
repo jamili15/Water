@@ -1,17 +1,24 @@
 export type Bill = {
   acctno: string;
-  acctname: string;
-  address: string;
+  acctid: string;
+  billid: string;
   classification: string;
-  coverage: string;
-  billmonth: string;
-  billyear: number;
-  metersize: string;
-  prevreading: number;
+  address: string;
+  location: string;
+  acctname: string;
+  billno: string;
+  monthname: string;
+  year: number;
+  billtoyear: number;
+  meter: string;
   reading: number;
+  prevreading: number;
   volume: number;
-  amount: number;
   items: BillItem[];
+  amount: number;
+  pmttxntype: string;
+  txntypename: string;
+  txntype: string;
 };
 
 export type BillItem = {
@@ -21,5 +28,6 @@ export type BillItem = {
   surcharge: number;
   particulars: string;
   total: number;
+  sortorder: number;
   penalty: number;
 };

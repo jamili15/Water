@@ -12,16 +12,15 @@ const BillingInfo = (props: any) => {
     { value: bill?.acctname || "", label: "Account Name" },
     { value: bill?.address || "", label: "Address" },
     { value: bill?.classification || "", label: "Classification" },
-    { value: bill?.coverage || "", label: "Coverage" },
   ];
 
   const dataMonthYear = (bill: Bill) => [
-    { value: bill?.billmonth || "", label: "Bill Month" },
-    { value: bill?.billyear.toString() || "", label: "Bill Year" },
+    { value: bill?.monthname || "", label: "Bill Month" },
+    { value: bill?.billtoyear.toString() || "", label: "Bill Year" },
   ];
 
   const dataReading = (bill: Bill) => [
-    { value: bill?.metersize || "", label: "Meter Size" },
+    { value: bill?.meter || "", label: "Meter Size" },
     { value: bill?.prevreading.toString() || "", label: "Previous Reading" },
     { value: bill?.reading.toString() || "", label: "Current Reading" },
     { value: bill?.volume?.toString() || "", label: "Consumption" },
@@ -33,8 +32,6 @@ const BillingInfo = (props: any) => {
     { label: "Disc/Penalty", field: "penalty", align: "right" },
     { label: "Total", field: "total", align: "right" },
   ];
-
-  const handleClickNext = () => {};
 
   return (
     <Card title={props.title} subTitleText={props.page.caption}>
@@ -76,6 +73,7 @@ const BillingInfo = (props: any) => {
           totalAmountDue={props.formValues.bill?.amount}
         />
       </div>
+      <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
       <ActionBar>
         <Button
           onClick={props.onCancel}
@@ -84,9 +82,7 @@ const BillingInfo = (props: any) => {
         >
           Back
         </Button>
-        <Button type="submit" onClick={handleClickNext}>
-          Confirm Payment
-        </Button>
+        <Button type="submit">Confirm Payment</Button>
       </ActionBar>
     </Card>
   );

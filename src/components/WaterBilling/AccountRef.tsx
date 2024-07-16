@@ -14,7 +14,7 @@ import { CircularProgress } from "@mui/material";
 import { useState } from "react";
 
 const AccountRef = (props: any) => {
-  const { channelId } = usePartnerContext();
+  const { partner } = usePartnerContext();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const svc = lookupService("WaterService");
@@ -27,7 +27,7 @@ const AccountRef = (props: any) => {
       await timeout(2);
       const bill: Bill = await svc?.invoke("getBilling", {
         refno: props.formValues.accountNo,
-        partnerid: channelId,
+        partnerid: partner?.channelid,
       });
       if (bill === undefined) {
         setError("Invalid Account Number");
@@ -54,6 +54,7 @@ const AccountRef = (props: any) => {
         validate={required}
         variant="standard"
       />
+      <div className="bg-gray-300 w-full h-[0.5px] mt-8" />
       <ActionBar>
         <Button
           onClick={props.onCancel}
