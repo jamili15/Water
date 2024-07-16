@@ -1,5 +1,5 @@
-export function required(value: any) {
-  return value ? undefined : "Required";
+export function required(value: any, message?: string) {
+  return value ? undefined : message ? "" : "Required";
 }
 
 export function validateDate(value: any) {
